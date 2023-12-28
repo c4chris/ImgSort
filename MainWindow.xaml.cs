@@ -8,9 +8,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -189,7 +191,7 @@ namespace ImgSort
     }
     // The ItemsSource used is a list of custom-class Bar objects called BarItems
 
-    public class ImageInfo
+    public class ImageInfo : INotifyPropertyChanged
     {
         public ImageInfo(string fullName, string name)
         {
@@ -198,6 +200,81 @@ namespace ImgSort
         }
         public string Name { get; set; }
         public string FullName { get; set; }
+        public int ImageClass
+        {
+            get
+            {
+                if (FullName.Length > 6)
+                {
+                    string end = FullName.Substring(FullName.Length - 6);
+                    if (end[0] == '_')
+                    {
+                        switch (end[1])
+                        {
+                            case 'e':
+                                return 1;
+                            case 'g':
+                                return 2;
+                            case 'm':
+                                return 3;
+                        }
+                    }
+                }
+                return 0;
+            }
+            set
+            {
+                if (value < 0 || value > 3) return;
+                if (value == ImageClass) return;
+                if (FullName.Length <= 6) return;
+                string end = FullName.Substring(FullName.Length - 6);
+                string start;
+                if (end[0] == '_')
+                {
+                    start = FullName.Substring(0, FullName.Length - 6);
+                }
+                else
+                {
+                    start = FullName.Substring(0, FullName.Length - 4);
+                }
+                string code = "";
+                switch (value)
+                {
+                    case 1:
+                        code = "_e";
+                        break;
+                    case 2:
+                        code = "_g";
+                        break;
+                    case 3:
+                        code = "_m";
+                        break;
+                }
+                string desiredName = start + code + ".png";
+                File.Move(FullName, desiredName);
+                FullName = desiredName;
+                OnPropertyChanged(nameof(ImageClassColor));
+            }
+        }
+        public string ImageClassColor
+        {
+            get
+            {
+                switch(ImageClass)
+                {
+                    case 1: return "White";
+                    case 2: return "Green";
+                    case 3: return "Red";
+                    default: return "Gold";
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public class ImagesRepository

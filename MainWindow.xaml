@@ -39,11 +39,11 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Click="Button_Click" BorderBrush="Yellow" DataContext="{x:Bind}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited" Grid.Column="0">
+                        <Button Click="Button_Click" BorderBrush="{x:Bind ImageClassColor, Mode=OneWay}" DataContext="{x:Bind}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited" Grid.Column="0">
                             <Image Source="{x:Bind FullName}" MaxHeight="192" MaxWidth="1600" />
                         </Button>
-                        <RadioButtons x:Name="ClassRadioButtons" SelectedIndex="0"  MaxColumns="2" Header="Class" Grid.Column="1">
-                            <RadioButton x:Name="U" Content="Unclassified" Foreground="Yellow" Style="{StaticResource RBStyle}" />
+                        <RadioButtons x:Name="ClassRadioButtons" SelectedIndex="{x:Bind ImageClass, Mode=TwoWay}"  MaxColumns="2" Header="Class" Grid.Column="1">
+                            <RadioButton x:Name="U" Content="Unclassified" Foreground="Gold" Style="{StaticResource RBStyle}" />
                             <RadioButton x:Name="E" Content="Empty" Style="{StaticResource RBStyle}" />
                             <RadioButton x:Name="G" Content="Good" Foreground="Green" Style="{StaticResource RBStyle}" />
                             <RadioButton x:Name="M" Content="Mixed" Foreground="Red" Style="{StaticResource RBStyle}" />
