@@ -39,7 +39,7 @@ namespace ImgSort
             _ = TrySetMicaBackdrop(false);
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
             this.SetTitleBar(AppTitleBar);      // set user ui element as titlebar
-            string folderPath = "C:\\Users\\iseli\\Downloads\\IMAGES_231210\\00";
+            string folderPath = "C:\\Users\\iseli\\Downloads\\IMAGES_231210\\01";
             LoadImages(folderPath);
         }
 
@@ -152,6 +152,43 @@ namespace ImgSort
 
             var result = await dialog.ShowAsync();
         }
+
+        private void Btn_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            var imageInfo = (sender as Button)?.DataContext as ImageInfo;
+            if (imageInfo != null)
+            {
+                var options = new FindNextElementOptions()
+                {
+                    SearchRoot = ImageScrollViewer,
+                    XYFocusNavigationStrategyOverride = XYFocusNavigationStrategyOverride.Projection
+                };
+                DependencyObject candidate = null;
+                if (e.Key == Windows.System.VirtualKey.A)
+                {
+                    imageInfo.ImageClass = 1;
+                    candidate = FocusManager.FindNextElement(FocusNavigationDirection.Down, options);
+                }
+                if (e.Key == Windows.System.VirtualKey.E) { imageInfo.ImageClass = 1; }
+                if (e.Key == Windows.System.VirtualKey.S)
+                {
+                    imageInfo.ImageClass = 2;
+                    candidate = FocusManager.FindNextElement(FocusNavigationDirection.Down, options);
+                }
+                if (e.Key == Windows.System.VirtualKey.G) { imageInfo.ImageClass = 2; }
+                if (e.Key == Windows.System.VirtualKey.D)
+                {
+                    imageInfo.ImageClass = 3;
+                    candidate = FocusManager.FindNextElement(FocusNavigationDirection.Down, options);
+                }
+                if (e.Key == Windows.System.VirtualKey.M) { imageInfo.ImageClass = 3; }
+                if (e.Key == Windows.System.VirtualKey.U) { imageInfo.ImageClass = 0; }
+                if (candidate != null && candidate is Control)
+                {
+                    (candidate as Control).Focus(FocusState.Keyboard);
+                }
+            }
+        }
     }
 
 
@@ -253,6 +290,7 @@ namespace ImgSort
                 string desiredName = start + code + ".png";
                 File.Move(FullName, desiredName);
                 FullName = desiredName;
+                OnPropertyChanged(nameof(ImageClass));
                 OnPropertyChanged(nameof(ImageClassColor));
             }
         }
