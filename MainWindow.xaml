@@ -9,6 +9,11 @@
     mc:Ignorable="d">
 
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="RadioButton" x:Key="RBStyle">
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -29,9 +34,21 @@
             <ScrollViewer.Resources>
                 <UniformGridLayout x:Name="UniformGridLayout" MinRowSpacing="8" MinColumnSpacing="8" ItemsJustification="SpaceEvenly"/>
                 <DataTemplate x:Key="ImageTemplate" x:DataType="local:ImageInfo">
-                    <Button Click="Button_Click" DataContext="{x:Bind}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited">
-                        <Image Source="{x:Bind FullName}" MaxHeight="192" MaxWidth="1600" />
-                    </Button>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Click="Button_Click" BorderBrush="Yellow" DataContext="{x:Bind}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited" Grid.Column="0">
+                            <Image Source="{x:Bind FullName}" MaxHeight="192" MaxWidth="1600" />
+                        </Button>
+                        <RadioButtons x:Name="ClassRadioButtons" SelectedIndex="0"  MaxColumns="2" Header="Class" Grid.Column="1">
+                            <RadioButton x:Name="U" Content="Unclassified" Foreground="Yellow" Style="{StaticResource RBStyle}" />
+                            <RadioButton x:Name="E" Content="Empty" Style="{StaticResource RBStyle}" />
+                            <RadioButton x:Name="G" Content="Good" Foreground="Green" Style="{StaticResource RBStyle}" />
+                            <RadioButton x:Name="M" Content="Mixed" Foreground="Red" Style="{StaticResource RBStyle}" />
+                        </RadioButtons>
+                    </Grid>
                 </DataTemplate>
             </ScrollViewer.Resources>
 
