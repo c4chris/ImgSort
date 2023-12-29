@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Shapes;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -69,14 +70,29 @@ namespace ImgSort
             var imageInfo = (sender as Button)?.DataContext as ImageInfo;
             if (imageInfo != null)
             {
+                Canvas canvas = new();
+                canvas.Width = 850;
+                canvas.Height = 250;
                 Image image = new();
                 image.Source = new BitmapImage(new Uri(imageInfo.FullName, UriKind.Absolute));
+                image.SetValue(Canvas.TopProperty, 4);
+                image.SetValue(Canvas.LeftProperty, 4);
+                canvas.Children.Add(image);
+                SolidColorBrush blueBrush = new SolidColorBrush(Microsoft.UI.Colors.Blue);
+                var rect = new Rectangle();
+                rect.Stroke = blueBrush;
+                rect.StrokeThickness = 4;
+                rect.Width = 104;
+                rect.Height = 104;
+                rect.SetValue(Canvas.TopProperty, 0);
+                rect.SetValue(Canvas.LeftProperty, 80);
+                canvas.Children.Add(rect);
                 Window window = new()
                 {
                     Title = imageInfo.Name,
-                    Content = image
+                    Content = canvas
                 };
-                SetWindowSize(window, 800, 250);
+                SetWindowSize(window, 1200, 250);
                 window.Activate();
             }
         }
