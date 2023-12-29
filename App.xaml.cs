@@ -47,5 +47,6 @@ namespace ImgSort
         }
 
         private Window m_window;
+        public static Random rand = new Random();
     }
 }

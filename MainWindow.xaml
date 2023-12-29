@@ -45,7 +45,7 @@
                         <RadioButtons x:Name="ClassRadioButtons" SelectedIndex="{x:Bind ImageClass, Mode=TwoWay}"  MaxColumns="2" Header="Class" Grid.Column="1">
                             <RadioButton x:Name="U" Content="Unclassified" Foreground="Gold" Style="{StaticResource RBStyle}" />
                             <RadioButton x:Name="E" Content="Empty" Style="{StaticResource RBStyle}" />
-                            <RadioButton x:Name="G" Content="Good" Foreground="Green" Style="{StaticResource RBStyle}" />
+                            <RadioButton x:Name="G" Content="Good" Foreground="SpringGreen" Style="{StaticResource RBStyle}" />
                             <RadioButton x:Name="M" Content="Mixed" Foreground="Red" Style="{StaticResource RBStyle}" />
                         </RadioButtons>
                     </Grid>
