@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -69,6 +70,8 @@ namespace ImgSort
                 Canvas canvas = new();
                 canvas.Width = 850;
                 canvas.Height = 250;
+                canvas.DataContext = imageInfo;
+                canvas.KeyUp += Canvas_KeyUp;
                 Image image = new();
                 image.Source = new BitmapImage(new Uri(imageInfo.FullName, UriKind.Absolute));
                 image.SetValue(Canvas.TopProperty, 4);
@@ -201,6 +204,22 @@ namespace ImgSort
                 }
             }
         }
+        private void Canvas_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            var canvas = (Canvas)sender;
+            var imageInfo = canvas?.DataContext as ImageInfo;
+            if (imageInfo != null)
+            {
+                if (e.Key == Windows.System.VirtualKey.Tab)
+                {
+                    var next = (imageInfo.RectLeft / 80 + 1) * 80;
+                    if (next > 720) next = 0;
+                    imageInfo.RectLeft = next;
+                    e.Handled = true;
+                    Canvas.SetLeft(canvas.Children[1], next);
+                }
+            }
+        }
     }
 
 
@@ -319,13 +338,23 @@ namespace ImgSort
                 }
             }
         }
-
+        public int RectLeft
+        {
+            get { return rectLeft; }
+            set
+            {
+                //Debug.WriteLine($"Rect moved from {rectLeft}");
+                rectLeft = value;
+                OnPropertyChanged(nameof(RectLeft));
+                //Debug.WriteLine($"Rect moved to {rectLeft}");
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public int RectLeft = App.rand.Next(0, 800);
+        private int rectLeft = App.rand.Next(0, 720);
     }
 
     public class ImagesRepository
