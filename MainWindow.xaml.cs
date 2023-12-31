@@ -94,7 +94,7 @@ namespace ImgSort
                 for (int i = 0; i < 10; i++)
                 {
                     var r = new Rectangle();
-                    r.Fill = ImageInfo.ColorBrush[i % 4];
+                    r.Fill = ImageInfo.ColorBrush[imageInfo.detail[i]];
                     r.Width = 80;
                     r.Height = 12;
                     r.SetValue(Canvas.LeftProperty, i*80 + 4);
@@ -238,9 +238,7 @@ namespace ImgSort
             {
                 if (e.Key == Windows.System.VirtualKey.Tab)
                 {
-                    var next = imageInfo.RectIdx + 1;
-                    if (next > 9) next = 0;
-                    imageInfo.RectIdx = next;
+                    imageInfo.NextRect();
                     e.Handled = true;
                     Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
                 }
@@ -249,6 +247,54 @@ namespace ImgSort
                     // will need to update file name here if needed
                     imageInfo.DetailWindow.Close();
                     //imageInfo.DetailWindow = null; should already be done by the Close handler
+                }
+                if (e.Key == Windows.System.VirtualKey.A)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 1;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[1];
+                    imageInfo.NextRect();
+                    e.Handled = true;
+                    Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
+                }
+                if (e.Key == Windows.System.VirtualKey.E)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 1;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[1];
+                    e.Handled = true;
+                }
+                if (e.Key == Windows.System.VirtualKey.S)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 2;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[2];
+                    imageInfo.NextRect();
+                    e.Handled = true;
+                    Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
+                }
+                if (e.Key == Windows.System.VirtualKey.G)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 2;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[2];
+                    e.Handled = true;
+                }
+                if (e.Key == Windows.System.VirtualKey.D)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 3;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[3];
+                    imageInfo.NextRect();
+                    e.Handled = true;
+                    Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
+                }
+                if (e.Key == Windows.System.VirtualKey.M)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 3;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[3];
+                    e.Handled = true;
+                }
+                if (e.Key == Windows.System.VirtualKey.U)
+                {
+                    imageInfo.detail[imageInfo.RectIdx] = 0;
+                    (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[0];
+                    e.Handled = true;
                 }
             }
         }
@@ -297,6 +343,7 @@ namespace ImgSort
         {
             FullName = fullName;
             Name = name;
+            detail = new int[10];
         }
         public string Name { get; set; }
         public string FullName { get; set; }
@@ -381,6 +428,12 @@ namespace ImgSort
                 //Debug.WriteLine($"Rect moved to {rectLeft}");
             }
         }
+        public void NextRect ()
+        {
+            var next = RectIdx + 1;
+            if (next > 9) next = 0;
+            RectIdx = next;
+        }
         public int RectLeft
         {
             get
@@ -413,6 +466,7 @@ namespace ImgSort
                 OnPropertyChanged(nameof(DetailWindow));
             }
         }
+        public int[] detail;
     }
 
     public class ImagesRepository
