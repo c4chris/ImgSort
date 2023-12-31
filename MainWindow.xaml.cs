@@ -64,6 +64,11 @@ namespace ImgSort
             var imageInfo = (sender as Button)?.DataContext as ImageInfo;
             if (imageInfo != null)
             {
+                if (imageInfo.DetailWindow != null)
+                {
+                    imageInfo.DetailWindow.Activate();
+                    return;
+                }
                 // Create the binding description.
                 Binding b = new Binding();
                 b.Mode = BindingMode.OneWay;
@@ -103,7 +108,18 @@ namespace ImgSort
                 };
                 SetWindowSize(window, 1200, 250);
                 window.Activate();
+                window.Closed += Window_Closed;
+                imageInfo.DetailWindow = window;
             }
+        }
+
+        private void Window_Closed(object sender, WindowEventArgs args)
+        {
+            var window = sender as Window;
+            var canvas = window.Content as Canvas;
+            var imageInfo = canvas?.DataContext as ImageInfo;
+            imageInfo.DetailWindow = null;
+            //Debug.WriteLine("### Set DetailWindow to null");
         }
 
         private static void SetWindowSize(Window window, int width, int height)
@@ -227,6 +243,12 @@ namespace ImgSort
                     imageInfo.RectIdx = next;
                     e.Handled = true;
                     Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
+                }
+                if (e.Key == Windows.System.VirtualKey.Enter)
+                {
+                    // will need to update file name here if needed
+                    imageInfo.DetailWindow.Close();
+                    //imageInfo.DetailWindow = null; should already be done by the Close handler
                 }
             }
         }
@@ -382,6 +404,15 @@ namespace ImgSort
             new SolidColorBrush(Colors.Red),
             new SolidColorBrush(Colors.Blue),
         };
+        private Window detailWindow = null;
+        public Window DetailWindow
+        {
+            get { return detailWindow; }
+            set {
+                detailWindow = value;
+                OnPropertyChanged(nameof(DetailWindow));
+            }
+        }
     }
 
     public class ImagesRepository
