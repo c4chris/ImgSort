@@ -1,3 +1,4 @@
+using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -41,7 +42,7 @@ namespace ImgSort
         {
             ImagesRepository.GetImages(folderPath);
             var numImages = ImagesRepository.Images.Count();
-            ImageInfoBar.Message = $"{numImages} have loaded";
+            ImageInfoBar.Message = $"{numImages} have loaded from {folderPath}";
             ImageInfoBar.IsOpen = true;
         }
 
@@ -77,15 +78,24 @@ namespace ImgSort
                 image.SetValue(Canvas.TopProperty, 4);
                 image.SetValue(Canvas.LeftProperty, 4);
                 canvas.Children.Add(image);
-                SolidColorBrush blueBrush = new SolidColorBrush(Microsoft.UI.Colors.Blue);
                 var rect = new Rectangle();
-                rect.Stroke = blueBrush;
+                rect.Stroke = ImageInfo.ColorBrush[4];
                 rect.StrokeThickness = 4;
                 rect.Width = 104;
                 rect.Height = 104;
                 rect.SetValue(Canvas.TopProperty, 0);
                 rect.SetBinding(Canvas.LeftProperty, b);
                 canvas.Children.Add(rect);
+                for (int i = 0; i < 10; i++)
+                {
+                    var r = new Rectangle();
+                    r.Fill = ImageInfo.ColorBrush[i % 4];
+                    r.Width = 80;
+                    r.Height = 12;
+                    r.SetValue(Canvas.LeftProperty, i*80 + 4);
+                    r.SetValue(Canvas.TopProperty, 108);
+                    canvas.Children.Add(r);
+                }
                 Window window = new()
                 {
                     Title = imageInfo.Name,
@@ -212,11 +222,11 @@ namespace ImgSort
             {
                 if (e.Key == Windows.System.VirtualKey.Tab)
                 {
-                    var next = (imageInfo.RectLeft / 80 + 1) * 80;
-                    if (next > 720) next = 0;
-                    imageInfo.RectLeft = next;
+                    var next = imageInfo.RectIdx + 1;
+                    if (next > 9) next = 0;
+                    imageInfo.RectIdx = next;
                     e.Handled = true;
-                    Canvas.SetLeft(canvas.Children[1], next);
+                    Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
                 }
             }
         }
@@ -338,15 +348,25 @@ namespace ImgSort
                 }
             }
         }
-        public int RectLeft
+        public int RectIdx
         {
-            get { return rectLeft; }
+            get { return rectIdx; }
             set
             {
                 //Debug.WriteLine($"Rect moved from {rectLeft}");
-                rectLeft = value;
-                OnPropertyChanged(nameof(RectLeft));
+                rectIdx = value;
+                OnPropertyChanged(nameof(RectIdx));
                 //Debug.WriteLine($"Rect moved to {rectLeft}");
+            }
+        }
+        public int RectLeft
+        {
+            get
+            {
+                var pos = rectIdx * 80 - 8;
+                if (pos < 0) pos = 0;
+                if (pos > 704) pos = 704;
+                return pos;
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -354,7 +374,14 @@ namespace ImgSort
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private int rectLeft = App.rand.Next(0, 720);
+        private int rectIdx = App.rand.Next(0, 9);
+        public static SolidColorBrush[] ColorBrush = {
+            new SolidColorBrush(Colors.Gold),
+            new SolidColorBrush(Colors.White),
+            new SolidColorBrush(Colors.SpringGreen),
+            new SolidColorBrush(Colors.Red),
+            new SolidColorBrush(Colors.Blue),
+        };
     }
 
     public class ImagesRepository
