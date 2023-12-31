@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -68,6 +69,18 @@ namespace ImgSort
                 {
                     imageInfo.DetailWindow.Activate();
                     return;
+                }
+                // initialize the details if we already have some info
+                string pattern = @"_[0-9a-f]{5}\.png$";
+                Match m = Regex.Match(imageInfo.FullName, pattern, RegexOptions.IgnoreCase);
+                if (m.Success)
+                {
+                    var v = Convert.ToUInt32(m.Value.Substring(1, 5),16);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        imageInfo.detail[9-i] = v & 3;
+                        v >>= 2;
+                    }
                 }
                 // Create the binding description.
                 Binding b = new Binding();
@@ -244,9 +257,37 @@ namespace ImgSort
                 }
                 if (e.Key == Windows.System.VirtualKey.Enter)
                 {
-                    // will need to update file name here if needed
+                    string start;
+                    string pattern = @"_[0-9a-f]{5}\.png$";
+                    Match m = Regex.Match(imageInfo.FullName, pattern, RegexOptions.IgnoreCase);
+                    if (m.Success)
+                    {
+                        start = imageInfo.FullName.Substring(0, m.Index);
+                    }
+                    else
+                    {
+                        string p2 = @"_[egm]\.png$";
+                        Match m2 = Regex.Match(imageInfo.FullName, p2, RegexOptions.IgnoreCase);
+                        if (m2.Success)
+                        {
+                            start = imageInfo.FullName.Substring(0, m2.Index);
+                        }
+                        else
+                        {
+                            start = imageInfo.FullName.Substring(0, imageInfo.FullName.Length - 4);
+                        }
+                    }
+                    uint v = 0;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        v <<= 2;
+                        v |= imageInfo.detail[i];
+                    }
+                    string code = $"_{v:x5}";
+                    string desiredName = start + code + ".png";
+                    File.Move(imageInfo.FullName, desiredName);
+                    imageInfo.FullName = desiredName;
                     imageInfo.DetailWindow.Close();
-                    //imageInfo.DetailWindow = null; should already be done by the Close handler
                 }
                 if (e.Key == Windows.System.VirtualKey.A)
                 {
@@ -343,28 +384,56 @@ namespace ImgSort
         {
             FullName = fullName;
             Name = name;
-            detail = new int[10];
+            detail = new uint[10];
         }
         public string Name { get; set; }
-        public string FullName { get; set; }
+        public string FullName
+        {
+            get { return fullName; }
+            set
+            {
+                if (value != fullName)
+                {
+                    fullName = value;
+                    OnPropertyChanged("FullName");
+                    OnPropertyChanged(nameof(ImageClass));
+                    OnPropertyChanged(nameof(ImageClassColor));
+                }
+            }
+        }
         public int ImageClass
         {
             get
             {
-                if (FullName.Length > 6)
+                string pattern = @"_[0-9a-f]{5}\.png$";
+                Match m = Regex.Match(FullName, pattern, RegexOptions.IgnoreCase);
+                if (m.Success)
                 {
-                    string end = FullName.Substring(FullName.Length - 6);
-                    if (end[0] == '_')
+                    var v = Convert.ToUInt32(m.Value.Substring(1,5),16);
+                    int[] cnt = new int[4];
+                    for (int i = 0; i < 10; i++)
                     {
-                        switch (end[1])
-                        {
-                            case 'e':
-                                return 1;
-                            case 'g':
-                                return 2;
-                            case 'm':
-                                return 3;
-                        }
+                        uint t = v & 3;
+                        v >>= 2;
+                        cnt[t] += 1;
+                    }
+                    if (cnt[0] > 0) return 0;
+                    if (cnt[3] > 0) return 3;
+                    if (cnt[2] > 0) return 2;
+                    return 1;
+                }
+                string p2 = @"_[egm]\.png$";
+                Match m2 = Regex.Match(FullName, p2, RegexOptions.IgnoreCase);
+                if (m2.Success)
+                {
+                    switch (m2.Value[1])
+                    {
+                        case 'e':
+                            return 1;
+                        case 'g':
+                            return 2;
+                        case 'm':
+                            return 3;
                     }
                 }
                 return 0;
@@ -400,8 +469,6 @@ namespace ImgSort
                 string desiredName = start + code + ".png";
                 File.Move(FullName, desiredName);
                 FullName = desiredName;
-                OnPropertyChanged(nameof(ImageClass));
-                OnPropertyChanged(nameof(ImageClassColor));
             }
         }
         public string ImageClassColor
@@ -466,7 +533,8 @@ namespace ImgSort
                 OnPropertyChanged(nameof(DetailWindow));
             }
         }
-        public int[] detail;
+        public uint[] detail;
+        private string fullName;
     }
 
     public class ImagesRepository
