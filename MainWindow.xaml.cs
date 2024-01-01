@@ -289,6 +289,10 @@ namespace ImgSort
                     imageInfo.FullName = desiredName;
                     imageInfo.DetailWindow.Close();
                 }
+                if (e.Key == Windows.System.VirtualKey.Escape)
+                {
+                    imageInfo.DetailWindow.Close();
+                }
                 if (e.Key == Windows.System.VirtualKey.A)
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 1;
@@ -340,9 +344,6 @@ namespace ImgSort
             }
         }
     }
-
-
-
     class WindowsSystemDispatcherQueueHelper
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -516,7 +517,7 @@ namespace ImgSort
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        private int rectIdx = App.rand.Next(0, 9);
+        private int rectIdx = 0;
         public static SolidColorBrush[] ColorBrush = {
             new SolidColorBrush(Colors.Gold),
             new SolidColorBrush(Colors.White),
