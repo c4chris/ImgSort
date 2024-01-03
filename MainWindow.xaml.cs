@@ -86,7 +86,7 @@ namespace ImgSort
                 b.Mode = BindingMode.OneWay;
                 b.Source = imageInfo.RectLeft;
                 Canvas canvas = new();
-                canvas.Width = 850;
+                canvas.Width = 900;
                 canvas.Height = 250;
                 canvas.DataContext = imageInfo;
                 canvas.KeyUp += Canvas_KeyUp;
@@ -113,12 +113,38 @@ namespace ImgSort
                     r.SetValue(Canvas.TopProperty, 108);
                     canvas.Children.Add(r);
                 }
+                var r1 = new Rectangle();
+                r1.Fill = ImageInfo.ColorBrush[imageInfo.ImageClass];
+                r1.Width = 12;
+                r1.Height = 12;
+                r1.SetValue(Canvas.LeftProperty, 812);
+                r1.SetValue(Canvas.TopProperty, 30);
+                canvas.Children.Add(r1);
+                var r2 = new Rectangle();
+                r2.Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
+                r2.Width = 12;
+                r2.Height = 12;
+                r2.SetValue(Canvas.LeftProperty, 812);
+                r2.SetValue(Canvas.TopProperty, 50);
+                canvas.Children.Add(r2);
+                var t1 = new TextBlock();
+                t1.Text = "Orig value";
+                t1.Width = 70;
+                t1.SetValue(Canvas.LeftProperty, 830);
+                t1.SetValue(Canvas.TopProperty, 25);
+                canvas.Children.Add(t1);
+                var t2 = new TextBlock();
+                t2.Text = "New value";
+                t2.Width = 70;
+                t2.SetValue(Canvas.LeftProperty, 830);
+                t2.SetValue(Canvas.TopProperty, 45);
+                canvas.Children.Add(t2);
                 Window window = new()
                 {
                     Title = imageInfo.Name,
                     Content = canvas
                 };
-                SetWindowSize(window, 1200, 250);
+                SetWindowSize(window, 1300, 250);
                 window.Activate();
                 window.Closed += Window_Closed;
                 imageInfo.DetailWindow = window;
@@ -296,6 +322,7 @@ namespace ImgSort
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 1;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[1];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     imageInfo.NextRect();
                     e.Handled = true;
                     Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
@@ -304,12 +331,14 @@ namespace ImgSort
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 1;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[1];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     e.Handled = true;
                 }
                 if (e.Key == Windows.System.VirtualKey.S)
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 2;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[2];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     imageInfo.NextRect();
                     e.Handled = true;
                     Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
@@ -318,12 +347,14 @@ namespace ImgSort
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 2;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[2];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     e.Handled = true;
                 }
                 if (e.Key == Windows.System.VirtualKey.D)
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 3;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[3];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     imageInfo.NextRect();
                     e.Handled = true;
                     Canvas.SetLeft(canvas.Children[1], imageInfo.RectLeft);
@@ -332,12 +363,14 @@ namespace ImgSort
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 3;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[3];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     e.Handled = true;
                 }
                 if (e.Key == Windows.System.VirtualKey.U)
                 {
                     imageInfo.detail[imageInfo.RectIdx] = 0;
                     (canvas.Children[imageInfo.RectIdx + 2] as Rectangle).Fill = ImageInfo.ColorBrush[0];
+                    (canvas.Children[12] as Rectangle).Fill = ImageInfo.ColorBrush[imageInfo.ClassFromDetail];
                     e.Handled = true;
                 }
             }
@@ -482,6 +515,21 @@ namespace ImgSort
                     case 3: return "Red";
                     default: return "Gold";
                 }
+            }
+        }
+        public int ClassFromDetail
+        {
+            get
+            {
+                int[] cnt = new int[4];
+                for (int i = 0; i < NbDetailImg; i++)
+                {
+                    cnt[detail[i]] += 1;
+                }
+                if (cnt[0] > 0) return 0;
+                if (cnt[3] > 0) return 3;
+                if (cnt[2] > 0) return 2;
+                return 1;
             }
         }
         public int RectIdx
