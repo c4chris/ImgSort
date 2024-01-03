@@ -11,7 +11,7 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
-            <x:String x:Key="AppTitleName">Image Sorter 0.0</x:String>
+            <x:String x:Key="AppTitleName">Image Sorter 1.0</x:String>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

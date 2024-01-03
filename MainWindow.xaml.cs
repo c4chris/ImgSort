@@ -10,7 +10,6 @@ using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -76,9 +75,9 @@ namespace ImgSort
                 if (m.Success)
                 {
                     var v = Convert.ToUInt32(m.Value.Substring(1, 5),16);
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < ImageInfo.NbDetailImg; i++)
                     {
-                        imageInfo.detail[9-i] = v & 3;
+                        imageInfo.detail[ImageInfo.NbDetailImg-1-i] = v & 3;
                         v >>= 2;
                     }
                 }
@@ -104,13 +103,13 @@ namespace ImgSort
                 rect.SetValue(Canvas.TopProperty, 0);
                 rect.SetBinding(Canvas.LeftProperty, b);
                 canvas.Children.Add(rect);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < ImageInfo.NbDetailImg; i++)
                 {
                     var r = new Rectangle();
                     r.Fill = ImageInfo.ColorBrush[imageInfo.detail[i]];
-                    r.Width = 80;
+                    r.Width = 88;
                     r.Height = 12;
-                    r.SetValue(Canvas.LeftProperty, i*80 + 4);
+                    r.SetValue(Canvas.LeftProperty, i*88 + 4);
                     r.SetValue(Canvas.TopProperty, 108);
                     canvas.Children.Add(r);
                 }
@@ -278,7 +277,7 @@ namespace ImgSort
                         }
                     }
                     uint v = 0;
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < ImageInfo.NbDetailImg; i++)
                     {
                         v <<= 2;
                         v |= imageInfo.detail[i];
@@ -385,7 +384,7 @@ namespace ImgSort
         {
             FullName = fullName;
             Name = name;
-            detail = new uint[10];
+            detail = new uint[NbDetailImg];
         }
         public string Name { get; set; }
         public string FullName
@@ -412,7 +411,7 @@ namespace ImgSort
                 {
                     var v = Convert.ToUInt32(m.Value.Substring(1,5),16);
                     int[] cnt = new int[4];
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < NbDetailImg; i++)
                     {
                         uint t = v & 3;
                         v >>= 2;
@@ -499,17 +498,14 @@ namespace ImgSort
         public void NextRect ()
         {
             var next = RectIdx + 1;
-            if (next > 9) next = 0;
+            if (next >= NbDetailImg) next = 0;
             RectIdx = next;
         }
         public int RectLeft
         {
             get
             {
-                var pos = rectIdx * 80 - 8;
-                if (pos < 0) pos = 0;
-                if (pos > 704) pos = 704;
-                return pos;
+                return rectIdx * 88;
             }
         }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -536,6 +532,7 @@ namespace ImgSort
         }
         public uint[] detail;
         private string fullName;
+        public const uint NbDetailImg = 9;
     }
 
     public class ImagesRepository
