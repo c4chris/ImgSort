@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my $src = shift @ARGV;
+my $dst = shift @ARGV;
+die "Cannot find source directory $src" unless defined($src) and -d $src;
+die "Cannot find destination directory $dst" unless defined($dst) and -d $dst;
+mkdir "$dst/empty";
+mkdir "$dst/good";
+mkdir "$dst/mixed";
+my %C;
+my @L = glob "$src/*/*.png";
+for my $file (@L) {
+  my ($name) = $file =~ /([^\/]+)\.png$/;
+  my ($tag) = $file =~ /_([^_.\/]+)\.png$/;
+  next unless defined $tag;
+  print STDERR "Processing $name\n";
+  system "convert $file -set filename:0 \"%[t]\" \\( +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +96+0 \\) -extent 96x96 \"%[filename:0]_%d.png\"";
+  my @D;
+  if ($tag eq "e") {
+    push @D, ("empty") x 9;
+  } else {
+    my $v = hex $tag;
+    for my $i (0 .. 8) {
+      my $dn = $v & 3;
+      my $ds = "unk";
+      $ds = "empty" if $dn == 1;
+      $ds = "good" if $dn == 2;
+      $ds = "mixed" if $dn == 3;
+      unshift @D, $ds;
+      $v >>= 2;
+    }
+  }
+  for my $i (0 .. 8) {
+    $C{$D[$i]} += 1;
+    if ($D[$i] eq "unk") {
+      unlink "${name}_$i.png";
+    } else {
+      system "mv ${name}_$i.png $dst/$D[$i]";
+    }
+  }
+}
+for my $class (sort keys %C) {
+  printf STDERR "%s\t%u\n", $class, $C{$class};
+}
+exit 0;
+__END__
+../../../Downloads/IMAGES_231210/03
+img0300_16a95.png
+img0301_16a55.png
+img0336_e.png
+img0337_15595.png
+
+convert img0500.png -set filename:0 "%[t]" \( +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +88+0 +clone -roll +96+0 \) -extent 96x96 "%[filename:0]_%d.png"
