@@ -1,5 +1,7 @@
 # ImgSort
 
+[![.NET Desktop](https://github.com/c4chris/ImgSort/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/c4chris/ImgSort/actions/workflows/dotnet-desktop.yml)
+
 Change the filename of png images to allow later automated processing to create reference images to train image recognition tools
 
 Currently the images are 800 pixel wide and 96 pixel high
