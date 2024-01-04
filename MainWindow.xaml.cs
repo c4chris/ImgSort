@@ -34,7 +34,7 @@ namespace ImgSort
             _ = TrySetMicaBackdrop(false);
             this.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
             this.SetTitleBar(AppTitleBar);      // set user ui element as titlebar
-            string folderPath = "C:\\Users\\iseli\\Downloads\\IMAGES_231210\\01";
+            string folderPath = Windows.ApplicationModel.Package.Current.InstalledPath + "\\Assets\\Images";
             LoadImages(folderPath);
         }
 
