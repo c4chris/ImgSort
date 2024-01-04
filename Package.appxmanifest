@@ -10,14 +10,14 @@
   <Identity
     Name="58468FermeIseli.ImgSort"
     Publisher="CN=B74BB25D-3183-49DB-B501-EBE682EB2231"
-    Version="1.0.1.0" />
+    Version="1.0.2.0" />
 
   <mp:PhoneIdentity PhoneProductId="874da5de-4c21-49ac-85e0-8a35610d9dd5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ImgSort</DisplayName>
     <PublisherDisplayName>Ferme Iseli</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <Logo>Assets\StoreLogo.scale-100.png</Logo>
   </Properties>
 
   <Dependencies>
@@ -35,11 +35,11 @@
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
         DisplayName="ImgSort"
-        Description="ImgSort"
+        Description="Simple tool to classify 800x96 PNG images in view of generating set of images of 96x96  to train image recognition tools"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
