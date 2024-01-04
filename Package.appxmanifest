@@ -10,7 +10,7 @@
   <Identity
     Name="58468FermeIseli.ImgSort"
     Publisher="CN=B74BB25D-3183-49DB-B501-EBE682EB2231"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="874da5de-4c21-49ac-85e0-8a35610d9dd5" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
